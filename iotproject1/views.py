@@ -13,7 +13,6 @@ from django.core.mail import send_mail
 import paho.mqtt.client as mqtt
 
 
-
 def test(request):
     if request.method == "POST":
         student_email = request.POST.get('email')
@@ -27,12 +26,10 @@ def test(request):
         new_student.save()
         appt = ApptRequests(professor = prof,student= new_student)
         appt.save()
-        # if(get_state_from_db(prof)==true):
-        #     send_presence_mail(appt.get_time(),new_student,prof)
-        # else:
-        #     send_absence_mail(appt.get_time(),new_student,prof)
-        #
-        send_absence_mail(appt.get_time(),new_student,prof)
+        if(get_state_from_db(pr)==True):
+            send_presence_mail(appt.get_time(),new_student,prof)
+        else:
+            send_absence_mail(appt.get_time(),new_student,prof)
 
         print(prof)
         print(new_student)
@@ -45,9 +42,10 @@ def test(request):
 
 
 
-def get_state_from_db(professor):
+def get_state_from_db(pr):
+    prof = Professor.objects.get(professor = pr)
     #this function will rerturn the current state that is saved from the model
-    return 0
+    return prof.in_office
 
 def check_hourly():
     #periodic function
