@@ -47,15 +47,16 @@ def get_state_from_db(pr):
     #this function will rerturn the current state that is saved from the model
     return prof.in_office
 
-def check_hourly():
-    #periodic function
-    #this function will run every hour to check if a professor previous state has changed and sends an email 1
-    return 0
-def nightly_shift():
-    #periodic function
-    #this function will run a query everyday at midnight to check all the ApptRequests and Students that have been in the DB
+
+def delete_old_requests():
+    #this function checks all the ApptRequests and Students that have been in the DB
     #for more than 24 hours and delete them
-    return 0
+    import datetime,pytz
+    now_utc = pytz.utc.localize(datetime.datetime.utcnow())
+    for appt in ApptRequests.objects.all():
+        if(now_utc.day - appt.get_time().day >=1 ):
+            appt.delete()
+
 
 def send_presence_mail(time,student,professor):
     #this function sends an email to the student about the presence of a certain professor
